@@ -25,8 +25,10 @@ export const resolvers = {
     note: async (_parent: INote, { id }: { id: number }, ctx: Context) => {
       try {
         const note = await ctx.prisma.note.findUnique({ where: { id } });
-        if (ctx.user && note.userId === ctx.user.id) {
+        if (note.userId === ctx.user.id) {
           return note;
+        } else {
+          throw new AuthenticationError("Not authorized");
         }
       } catch (err) {
         throw new AuthenticationError("Not authorized");
