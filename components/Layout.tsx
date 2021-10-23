@@ -14,7 +14,9 @@ export default function Layout({ children, title }: IProps) {
       </Head>
 
       <Navbar />
-      <main className="w-11/12 mx-auto mt-8">{children}</main>
+      <main className="w-full p-3 mx-auto mt-8 md:p-0 md:w-11/12">
+        {children}
+      </main>
     </>
   );
 }

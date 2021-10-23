@@ -11,5 +11,13 @@ export interface INote {
 
 export interface IUser {
   id: number;
+  name: string;
   email: string;
+}
+
+export interface INoteInput {
+  title: "";
+  subtitle: "";
+  body: "";
+  category: "";
 }

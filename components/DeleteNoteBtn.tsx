@@ -22,10 +22,7 @@ export default function DeleteNoteBtn({ noteId }: IProps) {
   };
 
   return (
-    <button
-      className="px-4 py-1 text-white rounded bg-primary"
-      onClick={handleDelete}
-    >
+    <button className="w-full btn" onClick={handleDelete}>
       Delete
     </button>
   );

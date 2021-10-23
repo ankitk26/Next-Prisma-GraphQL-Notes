@@ -5,6 +5,7 @@ export const LoginMutation = gql`
     loginUser(userInput: $userInput) {
       id
       email
+      name
     }
   }
 `;
@@ -14,6 +15,7 @@ export const RegisterMutation = gql`
     registerUser(userInput: $userInput) {
       id
       email
+      name
     }
   }
 `;

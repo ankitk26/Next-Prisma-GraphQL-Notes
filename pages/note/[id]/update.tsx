@@ -1,36 +1,28 @@
 import { useMutation, useQuery } from "@apollo/client";
+import { Form, Formik } from "formik";
 import { useRouter } from "next/dist/client/router";
-import { FormEvent, useEffect, useState } from "react";
-import FormControl from "../../../components/FormControl";
+import * as Yup from "yup";
+import FormikFormControl from "../../../components/FormikFormControl";
 import Layout from "../../../components/Layout";
 import { UpdateNoteMutation } from "../../../graphql/mutations";
 import { GetNotesQuery, SingleNoteQuery } from "../../../graphql/queries";
-import { INote } from "../../../types/types";
+import { INote, INoteInput } from "../../../types/types";
 
 interface IData {
   note: INote;
 }
 
+const NoteSchema = Yup.object().shape({
+  title: Yup.string().required("Required"),
+  body: Yup.string().required("Required"),
+});
+
 export default function UpdateNote() {
   const router = useRouter();
   const noteId = Number(router.query.id);
 
-  const [title, setTitle] = useState("");
-  const [subtitle, setSubtitle] = useState("");
-  const [body, setBody] = useState("");
-  const [category, setCategory] = useState("");
-
   const { data } = useQuery<IData>(SingleNoteQuery, {
     variables: { noteId },
-    onCompleted: (data) => {
-      if (data.note) {
-        const { note } = data;
-        setTitle(note.title);
-        setSubtitle(note.subtitle);
-        setBody(note.body);
-        setCategory(note.category);
-      }
-    },
     onError: (err) => {
       console.log(err.message);
     },
@@ -38,69 +30,62 @@ export default function UpdateNote() {
 
   const [updateNote] = useMutation(UpdateNoteMutation, {
     refetchQueries: [GetNotesQuery, "AllNotes"],
-    onCompleted: (data) => {
-      if (data.updateNote) {
-        router.push("/");
-      }
-    },
   });
 
-  // useEffect(() => {
-  //   if (loading) {
-  //     alert("Adding note");
-  //   }
-  // }, [loading]);
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    await updateNote({
-      variables: {
-        noteId,
-        noteInput: { title, subtitle, body, category },
-      },
-    });
-  };
+  const tempData = { title: "", subtitle: "", body: "", category: "" };
+  const getData = () => data?.note || tempData;
 
   return (
-    <Layout title="Add Note">
+    <Layout title="Update Note">
       <section className="flex flex-col">
-        <h1 className="text-3xl">Add Note</h1>
-        <form className="flex flex-col gap-8 my-8" onSubmit={handleSubmit}>
-          <FormControl
-            id="add_title"
-            label="Title"
-            type="text"
-            value={title}
-            setValue={setTitle}
-          />
-          <FormControl
-            id="add_subtitle"
-            label="Subtitle"
-            type="text"
-            value={subtitle}
-            setValue={setSubtitle}
-          />
-          <FormControl
-            id="add_body"
-            label="Body"
-            type="textarea"
-            value={body}
-            setValue={setBody}
-          />
-          <FormControl
-            id="add_category"
-            label="Category"
-            type="text"
-            value={category}
-            setValue={setCategory}
-          />
-          <button
-            type="submit"
-            className="px-6 w-[fit-content] py-2 text-white bg-primary rounded hover:bg-primary-dark"
-          >
-            Submit
-          </button>
-        </form>
+        <h1 className="text-3xl">Update Note</h1>
+
+        <Formik
+          initialValues={getData()}
+          enableReinitialize={true}
+          validationSchema={NoteSchema}
+          onSubmit={async (values: INoteInput) => {
+            const { title, subtitle, body, category } = values;
+            await updateNote({
+              variables: {
+                noteId,
+                noteInput: { title, subtitle, body, category },
+              },
+            });
+            router.push("/");
+          }}
+        >
+          {({ touched, errors, isSubmitting }) => (
+            <Form className="flex flex-col gap-8 my-8">
+              <FormikFormControl
+                id="add_title"
+                name="title"
+                touched={touched.title}
+                error={errors.title}
+              />
+
+              <FormikFormControl id="add_subtitle" name="subtitle" />
+
+              <FormikFormControl
+                id="add_body"
+                name="body"
+                type="textarea"
+                touched={touched.body}
+                error={errors.body}
+              />
+
+              <FormikFormControl id="add_category" name="category" />
+
+              <button type="submit" className="md:w-[fit-content] btn">
+                {isSubmitting ? (
+                  <img src="/spinner.svg" alt="loading..." className="w-6" />
+                ) : (
+                  "Submit"
+                )}
+              </button>
+            </Form>
+          )}
+        </Formik>
       </section>
     </Layout>
   );

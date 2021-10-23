@@ -5,6 +5,7 @@ export const GetUserQuery = gql`
     me {
       id
       email
+      name
     }
   }
 `;

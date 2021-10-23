@@ -4,9 +4,11 @@ import { useEffect } from "react";
 import Layout from "../components/Layout";
 import NoteSkeleton from "../components/NoteSkeleton";
 import NotesList from "../components/NotesList";
+import { useAuth } from "../context/AuthContext";
 import { GetNotesQuery } from "../graphql/queries";
 
 export default function Home() {
+  const { user } = useAuth();
   const { data, loading, error } = useQuery(GetNotesQuery);
   const router = useRouter();
 
@@ -18,8 +20,8 @@ export default function Home() {
 
   return (
     <Layout title="Home page">
-      {error && <p>{error.message}</p>}
-      {loading ? <NoteSkeleton /> : data && <NotesList notes={data.notes} />}
+      {user &&
+        (loading ? <NoteSkeleton /> : data && <NotesList notes={data.notes} />)}
     </Layout>
   );
 }

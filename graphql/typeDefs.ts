@@ -21,6 +21,7 @@ export const typeDefs = gql`
   type User {
     id: Int!
     email: String!
+    name: String!
   }
 
   input NoteInput {
@@ -32,6 +33,7 @@ export const typeDefs = gql`
 
   input UserInput {
     email: String!
+    name: String
     password: String!
   }
 

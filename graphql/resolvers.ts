@@ -8,6 +8,7 @@ import { Context } from "./context";
 interface IUserInput {
   userInput: {
     email: string;
+    name: string;
     password: string;
   };
 }
@@ -43,6 +44,7 @@ export const resolvers = {
       }
     },
   },
+
   Mutation: {
     addNote: async (_parent, { noteInput }, ctx: Context) => {
       try {
@@ -81,7 +83,7 @@ export const resolvers = {
     },
 
     registerUser: async (_parent, { userInput }: IUserInput, ctx: Context) => {
-      const { email, password } = userInput;
+      const { email, name, password } = userInput;
 
       // Check if user already exists
       const user = await ctx.prisma.user.findFirst({ where: { email } });
@@ -94,7 +96,7 @@ export const resolvers = {
       const salt = await genSalt(10);
       const hashedPassword = await hash(password, salt);
       const newUser = await ctx.prisma.user.create({
-        data: { email, password: hashedPassword },
+        data: { email, name, password: hashedPassword },
       });
       return newUser;
     },
@@ -104,17 +106,18 @@ export const resolvers = {
 
       // Check if user exists
       const user = await ctx.prisma.user.findFirst({ where: { email } });
-      if (!user) throw new AuthenticationError("Invalid credentials");
+      if (!user) throw new AuthenticationError("Account not found");
 
       // Compare passwords
       const isMatched = await compare(password, user.password);
-      if (!isMatched) throw new AuthenticationError("Invalid credentials");
+      if (!isMatched) throw new AuthenticationError("Incorrect password");
 
       // Create payload for token and set cookie
-      const payload = { id: user.id, email: user.email };
+      const payload = { id: user.id, email: user.email, name: user.name };
       await setLoginSession(ctx.res, payload);
       return payload;
     },
+
     logout: (_parent, _args, ctx: Context) => {
       removeTokenCookie(ctx.res);
       return "Logged out";
