@@ -8,15 +8,15 @@ import { useAuth } from "../context/AuthContext";
 import { GetNotesQuery } from "../graphql/queries";
 
 export default function Home() {
-  const { user } = useAuth();
+  const { user, authLoading } = useAuth();
   const { data, loading, error } = useQuery(GetNotesQuery);
   const router = useRouter();
 
   useEffect(() => {
-    if (error && !loading) {
+    if (!user && !authLoading) {
       router.push("/login");
     }
-  }, [loading, error]);
+  }, [user, authLoading]);
 
   return (
     <Layout title="Home page">

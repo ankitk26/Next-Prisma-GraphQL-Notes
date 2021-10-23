@@ -22,7 +22,7 @@ const NoteSchema = Yup.object().shape({
 });
 
 export default function AddNote() {
-  const { user } = useAuth();
+  const { user, authLoading } = useAuth();
 
   const router = useRouter();
   const [addNote] = useMutation(AddNoteMutation, {
@@ -30,10 +30,10 @@ export default function AddNote() {
   });
 
   useEffect(() => {
-    if (!user) {
+    if (!user && !authLoading) {
       router.push("/login");
     }
-  }, [user]);
+  }, [user, authLoading]);
 
   return (
     <Layout title="Add Note">

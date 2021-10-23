@@ -20,9 +20,7 @@ export default function Navbar() {
                 Welcome {user.name}
               </span>
               <Link href="/add">
-                <a className="hidden text-sm text-white md:block md:text-base">
-                  Add note
-                </a>
+                <a className="text-sm text-white md:text-base">Add note</a>
               </Link>
               <Link href="/logout">
                 <a className="text-sm text-white md:text-base">Logout</a>

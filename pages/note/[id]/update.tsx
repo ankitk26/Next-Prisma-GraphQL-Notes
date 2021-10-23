@@ -1,9 +1,11 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/dist/client/router";
+import { useEffect } from "react";
 import * as Yup from "yup";
 import FormikFormControl from "../../../components/FormikFormControl";
 import Layout from "../../../components/Layout";
+import { useAuth } from "../../../context/AuthContext";
 import { UpdateNoteMutation } from "../../../graphql/mutations";
 import { GetNotesQuery, SingleNoteQuery } from "../../../graphql/queries";
 import { INote, INoteInput } from "../../../types/types";
@@ -20,6 +22,7 @@ const NoteSchema = Yup.object().shape({
 export default function UpdateNote() {
   const router = useRouter();
   const noteId = Number(router.query.id);
+  const { user, authLoading } = useAuth();
 
   const { data } = useQuery<IData>(SingleNoteQuery, {
     variables: { noteId },
@@ -27,6 +30,12 @@ export default function UpdateNote() {
       console.log(err.message);
     },
   });
+
+  useEffect(() => {
+    if (!user && !authLoading) {
+      router.push("/login");
+    }
+  }, [user, authLoading]);
 
   const [updateNote] = useMutation(UpdateNoteMutation, {
     refetchQueries: [GetNotesQuery, "AllNotes"],

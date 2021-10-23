@@ -15,17 +15,23 @@ interface IData {
 export default function SingleNote() {
   const router = useRouter();
   const noteId = Number(router.query.id);
-  const { user } = useAuth();
+  const { user, authLoading } = useAuth();
 
   const { data, loading, error } = useQuery<IData>(SingleNoteQuery, {
     variables: { noteId },
   });
 
   useEffect(() => {
-    if (error && !loading) {
+    if (!user && !authLoading) {
+      router.push("/login");
+    }
+  }, [user, authLoading]);
+
+  useEffect(() => {
+    if (error) {
       router.push("/");
     }
-  }, [loading, error]);
+  }, [error]);
 
   return (
     <Layout title="Single note">
