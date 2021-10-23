@@ -1,11 +1,10 @@
 import { useApolloClient, useMutation } from "@apollo/client";
-import { Field, Form, Formik, FormikHelpers } from "formik";
+import { Form, Formik, FormikHelpers } from "formik";
 import { useRouter } from "next/dist/client/router";
 import Link from "next/link";
 import * as Yup from "yup";
 import FormikFormControl from "../components/FormikFormControl";
 import Layout from "../components/Layout";
-import MyInput from "../components/MyInput";
 import { useAuth } from "../context/AuthContext";
 import { LoginMutation } from "../graphql/mutations";
 

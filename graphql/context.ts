@@ -11,7 +11,15 @@ export type Context = {
   user: IUser;
 };
 
-export async function createContext({ req, res }): Promise<Context> {
+interface ICreateContextProps {
+  req: NextApiRequest;
+  res: NextApiResponse;
+}
+
+export async function createContext({
+  req,
+  res,
+}: ICreateContextProps): Promise<Context> {
   const user = await getUser(req, prisma);
   return { prisma, req, res, user };
 }

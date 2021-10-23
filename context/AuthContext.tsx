@@ -27,6 +27,10 @@ interface IContextProps {
 
 const AuthContext = createContext<IContextProps>(null);
 
+interface UserData {
+  me: IUser;
+}
+
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState<IUser>(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -34,7 +38,7 @@ export default function AuthProvider({ children }) {
 
   useEffect(() => loadUser(), []);
 
-  const [loadUser, { loading, data }] = useLazyQuery(GetUserQuery, {
+  const [loadUser, { loading, data }] = useLazyQuery<UserData>(GetUserQuery, {
     onCompleted: () => {
       console.log(data);
       setUser(data.me);

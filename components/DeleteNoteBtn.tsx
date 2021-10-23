@@ -10,7 +10,7 @@ interface IProps {
 export default function DeleteNoteBtn({ noteId }: IProps) {
   const router = useRouter();
 
-  const [deleteNote] = useMutation(DeleteNoteMutation, {
+  const [deleteNote] = useMutation<any, IProps>(DeleteNoteMutation, {
     refetchQueries: [GetNotesQuery, "AllNotes"],
   });
 

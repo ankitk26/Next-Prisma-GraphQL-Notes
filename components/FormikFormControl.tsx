@@ -1,4 +1,4 @@
-import { Field } from "formik";
+import { Field, FieldProps } from "formik";
 
 interface IProps {
   id: string;
@@ -8,7 +8,7 @@ interface IProps {
   error?: string;
 }
 
-const MyInput = ({ field, form, ...props }) => {
+const MyInput = ({ field, form, ...props }: FieldProps) => {
   return <input className="form-control" {...field} {...props} />;
 };
 
