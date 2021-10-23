@@ -7,6 +7,7 @@ import FormikFormControl from "../components/FormikFormControl";
 import Layout from "../components/Layout";
 import { useAuth } from "../context/AuthContext";
 import { AddNoteMutation } from "../graphql/mutations";
+import { gql } from "@apollo/client";
 
 interface Values {
   title: "";
@@ -25,7 +26,24 @@ export default function AddNote() {
 
   const router = useRouter();
   const [addNote] = useMutation(AddNoteMutation, {
-    refetchQueries: [`AllNotes`],
+    update: (cache, { data: { addNote } }) => {
+      cache.modify({
+        fields: {
+          notes(existingNotes = []) {
+            const newNoteRef = cache.writeFragment({
+              data: addNote,
+              fragment: gql`
+                fragment NewNote on Note {
+                  id
+                  type
+                }
+              `,
+            });
+            return [...existingNotes, newNoteRef];
+          },
+        },
+      });
+    },
   });
 
   useEffect(() => {
