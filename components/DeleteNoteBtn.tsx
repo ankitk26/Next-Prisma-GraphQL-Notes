@@ -11,7 +11,17 @@ export default function DeleteNoteBtn({ noteId }: IProps) {
   const router = useRouter();
 
   const [deleteNote] = useMutation<any, IProps>(DeleteNoteMutation, {
-    refetchQueries: [GetNotesQuery, "AllNotes"],
+    // refetchQueries: [GetNotesQuery, "AllNotes"],
+    update: (cache, { data }) => {
+      const existingNotes: any = cache.readQuery({ query: GetNotesQuery });
+      const newNotes = existingNotes?.notes.filter(
+        (note: any) => note.id !== noteId
+      );
+      cache.writeQuery({
+        query: GetNotesQuery,
+        data: { notes: newNotes },
+      });
+    },
   });
 
   const handleDelete = async () => {
