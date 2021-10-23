@@ -7,7 +7,6 @@ import FormikFormControl from "../components/FormikFormControl";
 import Layout from "../components/Layout";
 import { useAuth } from "../context/AuthContext";
 import { AddNoteMutation } from "../graphql/mutations";
-import { GetNotesQuery } from "../graphql/queries";
 
 interface Values {
   title: "";
@@ -26,7 +25,7 @@ export default function AddNote() {
 
   const router = useRouter();
   const [addNote] = useMutation(AddNoteMutation, {
-    refetchQueries: [GetNotesQuery, "AllNotes"],
+    refetchQueries: [`AllNotes`],
   });
 
   useEffect(() => {
